@@ -31,8 +31,8 @@ function addDescription(product) {
 //function that adds color options to the DOM given the product object
 function addColors(product) {
     const colors = document.getElementById("colors");
-    product.colors.forEach(element => {
-        colors.innerHTML+=`<option value="${element}">${element}</option>`
+    product.colors.forEach(color => {
+        colors.innerHTML+=`<option value="${color}">${color}</option>`
     });
 }
 
@@ -47,24 +47,23 @@ function addDom(product) {
     
 }
 
-// function that adds an object containing the product id, the color and the quantity chosen to the local storage
-function savePurchase (product) {
+// function that adds an object (purchase) containing the product id, the color and the quantity chosen to the local storage
+function savePurchase () {
     const colors = document.getElementById("colors");
     const quantity = document.getElementById("quantity");
     const purchase = {
         id: id,
         color: colors.value,
         quantity: parseInt(quantity.value),
-        price: product.price
     }
     window.localStorage.setItem(`purchase${window.localStorage.length}`,JSON.stringify(purchase));
 }
 
 //function that sets savePurchase as onclick function of addToCart button 
-function setOnClick (product) {
+function setOnClick () {
     const addToCart = document.getElementById("addToCart");
     addToCart.onclick = function () {
-        savePurchase(product);
+        savePurchase();
     }
 }
 

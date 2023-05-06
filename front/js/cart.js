@@ -27,9 +27,9 @@ function addPurchaseToDom(product,purchase) {
     cart_items.innerHTML+=htmlToAdd; 
 }
 
-// function that gives the product object given the purchase object and the array of products objects
+// function that finds the product object given the purchase object and the array of products objects
 function findProduct(purchase,products) {
-    var productFound = "";
+    let productFound = "";
     products.forEach(product => {
         if (product._id === purchase.id) {
             productFound = product;
@@ -49,7 +49,7 @@ function printPurchases(products) {
 
     }
 
-    setTotal();
+    setTotal(products);
 }
 
 // function that returns an array of all purchases objects in localStorage
@@ -72,15 +72,23 @@ function duplicate(array) {
 
 
 // function that checks if two purchases are identical and if true merge those objects ; return true or false
+
 function checkAndMergeIdentical(purchases) {
+    // iteration over each "purchase" in the "purchases" array
     for (const purchase of purchases) {
+        // creation of a copy of the "purchases" array
         var arrayToCheck = duplicate(purchases);
+        // deletion of 1 element of "arrayToCheck" that equals "purchase" 
         arrayToCheck.splice(arrayToCheck.findIndex(function (element) {
             if (element===purchase) return true
         }),1);
+        // iteration over each remaining purchase of arrayToCheck
         for (const purchaseToCompare of arrayToCheck) {
+            // if an element of "arrayToCheck" corresponds to the same product and with the same color
             if (purchaseToCompare.id === purchase.id && purchaseToCompare.color === purchase.color) {
+                // Adding quantity of this purchase to the original purchase
                 purchase.quantity+=purchaseToCompare.quantity;
+                // Deleting this purchase
                 purchases.splice(purchases.findIndex(function (element) {
                     if (element===purchaseToCompare) return true
                 }),1);
@@ -136,14 +144,15 @@ function deletePurchase(id,color) {
 }
 
 // Function that sets deletePurchase function to all deleteItem buttons and remove corresponding element from the DOM
-function setDeleteOnClick() {
+function setDeleteOnClick(products) {
     const deleteButtonsElements = document.getElementsByClassName("deleteItem");
+    // conversion into an array
     var deleteButtons = [].slice.call(deleteButtonsElements);
     deleteButtons.forEach(element => {
         element.onclick = function () {
             deletePurchase(element.closest(".cart__item").dataset.id,element.closest(".cart__item").dataset.color);
             element.closest(".cart__item").remove();
-            setTotal();
+            setTotal(products);
         };
     });
 }
@@ -159,19 +168,20 @@ function calcQuantity() {
 }
 
 // Function that calculates the total price
-function calcPrice() {
+function calcPrice(products) {
     const purchases = getAllPurchases();
     var price = 0;
-    purchases.forEach(element => {
-        price += element.quantity * element.price;
+    purchases.forEach(purchase => {
+        const product = findProduct(purchase,products)
+        price += purchase.quantity * product.price;
     });
     return price;
 }
 
 // Function that sets total quantity and total price on DOM
-function setTotal() {
+function setTotal(products) {
     const quantity = calcQuantity();
-    const price = calcPrice();
+    const price = calcPrice(products);
     const totalQuantity = document.getElementById("totalQuantity");
     const totalPrice = document.getElementById("totalPrice");
     totalQuantity.innerHTML = quantity;
@@ -179,15 +189,15 @@ function setTotal() {
 }
 
 // Function that finds specific purchase given the id and color of the product
-function findPurchase(id,color,purchases) {
-    return purchases.filter(element => {
-        if (element.id === id && element.color === color) return true
-    })[0];
-}
+// function findPurchase(id,color,purchases) {
+//     return purchases.filter(element => {
+//         if (element.id === id && element.color === color) return true
+//     })[0];
+// }
 
 
 // Function that updates quantity of purchase on localStorage and updates DOM
-function updateQuantity(element) {
+function updateQuantity(element,products) {
     const id = element.closest(".cart__item").dataset.id;
     const color = element.closest(".cart__item").dataset.color;
     var purchases = getAllPurchases();
@@ -199,16 +209,17 @@ function updateQuantity(element) {
     });
     localStorage.clear();
     save(purchasesUpdated);
-    setTotal();
+    setTotal(products);
 }
 
 //function that sets updateQuantity as onchange function of itemQuantity elements
-function setUpdateQuantityOnChange() {
+function setUpdateQuantityOnChange(products) {
     const itemsQuantityElements = document.getElementsByClassName("itemQuantity");
+    // conversion into an array
     var itemsQuantity = [].slice.call(itemsQuantityElements);
     itemsQuantity.forEach(element => {
         element.onchange = () => {
-            updateQuantity(element);
+            updateQuantity(element,products);
         };
     });
 }
@@ -220,7 +231,7 @@ function checkFirstNameInput() {
     const regex = /[^A-Za-zéèçàù -]/;
     
     if (firstName.search(regex)!==-1) {
-        firstNameErrorMsg.innerHTML = "Cela n'est pas valide, votre prénom ne doit contenir ni chiffre ni caractère spécial";
+        firstNameErrorMsg.innerHTML = "Cela n'est pas valide, votre prénom ne doit contenir ni chiffre ni caractère spécial autre que '-'";
         return false;
     }
     else {
@@ -236,7 +247,7 @@ function checkLastNameInput() {
     const regex = /[^A-Za-zéèçàù -]/;
     
     if (lastName.search(regex)!==-1) {
-        lastNameErrorMsg.innerHTML = "Cela n'est pas valide, votre nom ne doit contenir ni chiffre ni caractère spécial";
+        lastNameErrorMsg.innerHTML = "Cela n'est pas valide, votre nom ne doit contenir ni chiffre ni caractère spécial autre que '-'";
         return false;
     }
     else {
@@ -251,7 +262,7 @@ function checkAddressInput() {
     const regex = /[^A-Za-z0-9éèçàù -]/;
     
     if (address.search(regex)!==-1) {
-        addressErrorMsg.innerHTML = "Cela n'est pas valide, votre adresse ne doit pas contenir de caractère spécial";
+        addressErrorMsg.innerHTML = "Cela n'est pas valide, votre adresse ne doit pas contenir de caractère spécial autre que '-'";
         return false;
     }
     else {
@@ -267,7 +278,7 @@ function checkCityInput() {
     const regex = /[^A-Za-zéèçàù -]/;
     
     if (city.search(regex)!==-1) {
-        cityErrorMsg.innerHTML = "Cela n'est pas valide, votre ville ne doit contenir ni chiffre ni caractère spécial";
+        cityErrorMsg.innerHTML = "Cela n'est pas valide, votre ville ne doit contenir ni chiffre ni caractère spécial autre que '-'";
         return false;
     }
     else {
@@ -383,9 +394,17 @@ fetch(apiUrl)
         updateLocalStorage();
         return products;
     })
-    .then(printPurchases)
-    .then(setDeleteOnClick)
-    .then(setUpdateQuantityOnChange)
+    .then((products)=> {
+        printPurchases(products);
+        return products;
+    })
+    .then((products)=> {
+        setDeleteOnClick(products);
+        return products;
+    })
+    .then((products)=>{
+        setUpdateQuantityOnChange(products);
+    })
     .then(setCheckerFunctions)
     .then(setOnSubmit)
     .catch(function(err) {
