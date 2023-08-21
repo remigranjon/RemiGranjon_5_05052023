@@ -87,117 +87,140 @@ function findProduct(purchase, products) {
   return productFound;
 }
 
+// function that returns the cart contained in localStorage
+function getCart() {
+  const cart = window.localStorage.getItem("cart")
+    ? JSON.parse(window.localStorage.getItem("cart"))
+    : [];
+  return cart;
+}
+
 // function that adds DOM elements of all purchases given the array of products objects
 function printPurchases(products) {
   const cart_items = document.getElementById("cart__items");
   cart_items.innerHTML = "";
 
-  for (let i = 0; i < localStorage.length; i++) {
-    var purchase = JSON.parse(localStorage.getItem(i));
-    addPurchaseToDom(findProduct(purchase, products), purchase);
-  }
+  const cart = getCart();
+
+  cart.map((purchase) =>
+    addPurchaseToDom(findProduct(purchase, products), purchase)
+  );
+  //   for (let i = 0; i < localStorage.length; i++) {
+  //     var purchase = JSON.parse(localStorage.getItem(i));
+  //     addPurchaseToDom(findProduct(purchase, products), purchase);
+  //   }
 
   setTotal(products);
 }
 
-// function that returns an array of all purchases objects in localStorage
-function getAllPurchases() {
-  var purchases = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    purchases.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-  }
-  return purchases;
-}
+// // function that returns an array of all purchases objects in localStorage
+// function getAllPurchases() {
+//   var purchases = [];
+//   for (let i = 0; i < localStorage.length; i++) {
+//     purchases.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
+//   }
+//   return purchases;
+// }
 
-// function that duplicates an array
-function duplicate(array) {
-  var response = [];
-  for (const element of array) {
-    response.push(element);
-  }
-  return response;
-}
+// // function that duplicates an array
+// function duplicate(array) {
+//   var response = [];
+//   for (const element of array) {
+//     response.push(element);
+//   }
+//   return response;
+// }
 
-// function that checks if two purchases are identical and if true merge those objects ; return true or false
+// // function that checks if two purchases are identical and if true merge those objects ; return true or false
 
-function checkAndMergeIdentical(purchases) {
-  // iteration over each "purchase" in the "purchases" array
-  for (const purchase of purchases) {
-    // creation of a copy of the "purchases" array
-    var arrayToCheck = duplicate(purchases);
-    // deletion of 1 element of "arrayToCheck" that equals "purchase"
-    arrayToCheck.splice(
-      arrayToCheck.findIndex(function (element) {
-        if (element === purchase) return true;
-      }),
-      1
-    );
-    // iteration over each remaining purchase of arrayToCheck
-    for (const purchaseToCompare of arrayToCheck) {
-      // if an element of "arrayToCheck" corresponds to the same product and with the same color
-      if (
-        purchaseToCompare.id === purchase.id &&
-        purchaseToCompare.color === purchase.color
-      ) {
-        // Adding quantity of this purchase to the original purchase
-        purchase.quantity += purchaseToCompare.quantity;
-        // Deleting this purchase
-        purchases.splice(
-          purchases.findIndex(function (element) {
-            if (element === purchaseToCompare) return true;
-          }),
-          1
-        );
-        return true;
-      }
-    }
-  }
-  return false;
-}
+// function checkAndMergeIdentical(purchases) {
+//   // iteration over each "purchase" in the "purchases" array
+//   for (const purchase of purchases) {
+//     // creation of a copy of the "purchases" array
+//     var arrayToCheck = duplicate(purchases);
+//     // deletion of 1 element of "arrayToCheck" that equals "purchase"
+//     arrayToCheck.splice(
+//       arrayToCheck.findIndex(function (element) {
+//         if (element === purchase) return true;
+//       }),
+//       1
+//     );
+//     // iteration over each remaining purchase of arrayToCheck
+//     for (const purchaseToCompare of arrayToCheck) {
+//       // if an element of "arrayToCheck" corresponds to the same product and with the same color
+//       if (
+//         purchaseToCompare.id === purchase.id &&
+//         purchaseToCompare.color === purchase.color
+//       ) {
+//         // Adding quantity of this purchase to the original purchase
+//         purchase.quantity += purchaseToCompare.quantity;
+//         // Deleting this purchase
+//         purchases.splice(
+//           purchases.findIndex(function (element) {
+//             if (element === purchaseToCompare) return true;
+//           }),
+//           1
+//         );
+//         return true;
+//       }
+//     }
+//   }
+//   return false;
+// }
 
-// Function that iterates checkAndMergeIdentical until it returns false
-function completeCheckAndMergeIdentical(purchases) {
-  while (checkAndMergeIdentical(purchases));
-  return purchases;
-}
+// // Function that iterates checkAndMergeIdentical until it returns false
+// function completeCheckAndMergeIdentical(purchases) {
+//   while (checkAndMergeIdentical(purchases));
+//   return purchases;
+// }
 
-// Function that saves an array on the localStorage given the array of objects
-function save(array) {
-  var i = 0;
-  array.forEach((element) => {
-    localStorage.setItem(i, JSON.stringify(element));
-    i++;
-  });
-}
+// // Function that saves an array on the localStorage given the array of objects
+// function save(array) {
+//   var i = 0;
+//   array.forEach((element) => {
+//     localStorage.setItem(i, JSON.stringify(element));
+//     i++;
+//   });
+// }
 
-// Function that sorts purchases array function of the id and color of products
-function sortPurchases(purchases) {
-  purchases.sort((a, b) => {
-    var comparison = a.id.localeCompare(b.id);
-    if (comparison === 0) {
-      comparison = a.color.localeCompare(b.color);
-    }
-    return comparison;
-  });
-}
+// // Function that sorts purchases array function of the id and color of products
+// function sortPurchases(purchases) {
+//   purchases.sort((a, b) => {
+//     var comparison = a.id.localeCompare(b.id);
+//     if (comparison === 0) {
+//       comparison = a.color.localeCompare(b.color);
+//     }
+//     return comparison;
+//   });
+// }
 
-// Function that calls completeCheckAndMergeIdentical on localStorage content, sort and updates localStorage content
-function updateLocalStorage() {
-  var purchases = completeCheckAndMergeIdentical(getAllPurchases());
-  sortPurchases(purchases);
-  localStorage.clear();
-  save(purchases);
-}
+// // Function that calls completeCheckAndMergeIdentical on localStorage content, sort and updates localStorage content
+// function updateLocalStorage() {
+//   var purchases = completeCheckAndMergeIdentical(getAllPurchases());
+//   sortPurchases(purchases);
+//   localStorage.clear();
+//   save(purchases);
+// }
 
 // Function that deletes purchase from localStorage given the id and color of the purchase
 function deletePurchase(id, color) {
-  var purchases = getAllPurchases();
-  purchases = purchases.filter((element) => {
+  var cart = getCart();
+  cart = cart.filter((element) => {
     if (element.id !== id || element.color !== color) return true;
   });
   localStorage.clear();
-  save(purchases);
+  window.localStorage.setItem("cart", JSON.stringify(cart));
 }
+
+// // Function that deletes purchase from localStorage given the id and color of the purchase
+// function deletePurchase(id, color) {
+//     var purchases = getAllPurchases();
+//     purchases = purchases.filter((element) => {
+//       if (element.id !== id || element.color !== color) return true;
+//     });
+//     localStorage.clear();
+//     save(purchases);
+//   }
 
 // Function that sets deletePurchase function to all deleteItem buttons and remove corresponding element from the DOM
 function setDeleteOnClick(products) {
@@ -218,24 +241,43 @@ function setDeleteOnClick(products) {
 
 // Function that calculates the total quantity of products
 function calcQuantity() {
-  const purchases = getAllPurchases();
+  const cart = getCart();
   var quantity = 0;
-  purchases.forEach((element) => {
+  cart.forEach((element) => {
     quantity += element.quantity;
   });
   return quantity;
 }
+// // Function that calculates the total quantity of products
+// function calcQuantity() {
+//   const purchases = getAllPurchases();
+//   var quantity = 0;
+//   purchases.forEach((element) => {
+//     quantity += element.quantity;
+//   });
+//   return quantity;
+// }
 
 // Function that calculates the total price
 function calcPrice(products) {
-  const purchases = getAllPurchases();
+  const cart = getCart();
   var price = 0;
-  purchases.forEach((purchase) => {
+  cart.forEach((purchase) => {
     const product = findProduct(purchase, products);
     price += purchase.quantity * product.price;
   });
   return price;
 }
+// // Function that calculates the total price
+// function calcPrice(products) {
+//   const purchases = getAllPurchases();
+//   var price = 0;
+//   purchases.forEach((purchase) => {
+//     const product = findProduct(purchase, products);
+//     price += purchase.quantity * product.price;
+//   });
+//   return price;
+// }
 
 // Function that sets total quantity and total price on DOM
 function setTotal(products) {
@@ -258,17 +300,32 @@ function setTotal(products) {
 function updateQuantity(element, products) {
   const id = element.closest(".cart__item").dataset.id;
   const color = element.closest(".cart__item").dataset.color;
-  var purchases = getAllPurchases();
-  var purchasesUpdated = purchases.map((purchase) => {
+  const cart = getCart();
+  const cartUpdated = cart.map((purchase) => {
     if (purchase.id === id && purchase.color === color) {
       purchase.quantity = parseInt(element.value);
     }
     return purchase;
   });
   localStorage.clear();
-  save(purchasesUpdated);
+  window.localStorage.setItem("cart", JSON.stringify(cartUpdated));
   setTotal(products);
 }
+// // Function that updates quantity of purchase on localStorage and updates DOM
+// function updateQuantity(element, products) {
+//   const id = element.closest(".cart__item").dataset.id;
+//   const color = element.closest(".cart__item").dataset.color;
+//   var purchases = getAllPurchases();
+//   var purchasesUpdated = purchases.map((purchase) => {
+//     if (purchase.id === id && purchase.color === color) {
+//       purchase.quantity = parseInt(element.value);
+//     }
+//     return purchase;
+//   });
+//   localStorage.clear();
+//   save(purchasesUpdated);
+//   setTotal(products);
+// }
 
 //function that sets updateQuantity as onchange function of itemQuantity elements
 function setUpdateQuantityOnChange(products) {
@@ -452,10 +509,10 @@ fetch(apiUrl)
       return res.json();
     }
   })
-  .then(function (products) {
-    updateLocalStorage();
-    return products;
-  })
+  //   .then(function (products) {
+  //     updateLocalStorage();
+  //     return products;
+  //   })
   .then((products) => {
     printPurchases(products);
     return products;

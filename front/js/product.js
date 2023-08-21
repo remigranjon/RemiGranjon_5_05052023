@@ -52,19 +52,65 @@ function addDom(product) {
   addColors(product);
 }
 
+// function that check end merge identical element (same id and same color) in the cart
+function checkAndMergeIdentical(cart) {
+  return cart.reduce((newCart, purchase) => {
+    indexOfSamePurchase = newCart.findIndex(
+      (element) =>
+        element.id === purchase.id && element.color === purchase.color
+    );
+    if (indexOfSamePurchase > -1) {
+      purchase.quantity += newCart[indexOfSamePurchase].quantity;
+      newCart = newCart.filter((element) => {
+        return !(
+          element.id === purchase.id && element.color === purchase.color
+        );
+      });
+      //   delete newCart[indexOfSamePurchase];
+    }
+    newCart.push(purchase);
+    return newCart;
+  }, []);
+}
+
+// Function that sorts cart array function of the id and color of products
+function sortCart(cart) {
+  cart.sort((a, b) => {
+    var comparison = a.id.localeCompare(b.id);
+    if (comparison === 0) {
+      comparison = a.color.localeCompare(b.color);
+    }
+    return comparison;
+  });
+}
+
 // function that adds an object (purchase) containing the product id, the color and the quantity chosen to the local storage
 function savePurchase() {
   const colors = document.getElementById("colors");
   const quantity = document.getElementById("quantity");
-  const purchase = {
-    id: id,
-    color: colors.value,
-    quantity: parseInt(quantity.value),
-  };
-  window.localStorage.setItem(
-    `purchase${window.localStorage.length}`,
-    JSON.stringify(purchase)
-  );
+
+  if (colors.value != "" && quantity.value != 0) {
+    const purchase = {
+      id: id,
+      color: colors.value,
+      quantity: parseInt(quantity.value),
+    };
+    let cart = window.localStorage.getItem("cart")
+      ? JSON.parse(window.localStorage.getItem("cart"))
+      : [];
+
+    cart.push(purchase);
+
+    cart = checkAndMergeIdentical(cart);
+
+    sortCart(cart);
+
+    window.localStorage.setItem("cart", JSON.stringify(cart));
+    //   window.localStorage.setItem(
+    //     `purchase${window.localStorage.length}`,
+    //     JSON.stringify(purchase)
+    //   );
+  }
 }
 
 //function that sets savePurchase as onclick function of addToCart button
