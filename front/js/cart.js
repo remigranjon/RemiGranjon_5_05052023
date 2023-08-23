@@ -105,102 +105,8 @@ function printPurchases(products) {
   cart.map((purchase) =>
     addPurchaseToDom(findProduct(purchase, products), purchase)
   );
-  //   for (let i = 0; i < localStorage.length; i++) {
-  //     var purchase = JSON.parse(localStorage.getItem(i));
-  //     addPurchaseToDom(findProduct(purchase, products), purchase);
-  //   }
-
   setTotal(products);
 }
-
-// // function that returns an array of all purchases objects in localStorage
-// function getAllPurchases() {
-//   var purchases = [];
-//   for (let i = 0; i < localStorage.length; i++) {
-//     purchases.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-//   }
-//   return purchases;
-// }
-
-// // function that duplicates an array
-// function duplicate(array) {
-//   var response = [];
-//   for (const element of array) {
-//     response.push(element);
-//   }
-//   return response;
-// }
-
-// // function that checks if two purchases are identical and if true merge those objects ; return true or false
-
-// function checkAndMergeIdentical(purchases) {
-//   // iteration over each "purchase" in the "purchases" array
-//   for (const purchase of purchases) {
-//     // creation of a copy of the "purchases" array
-//     var arrayToCheck = duplicate(purchases);
-//     // deletion of 1 element of "arrayToCheck" that equals "purchase"
-//     arrayToCheck.splice(
-//       arrayToCheck.findIndex(function (element) {
-//         if (element === purchase) return true;
-//       }),
-//       1
-//     );
-//     // iteration over each remaining purchase of arrayToCheck
-//     for (const purchaseToCompare of arrayToCheck) {
-//       // if an element of "arrayToCheck" corresponds to the same product and with the same color
-//       if (
-//         purchaseToCompare.id === purchase.id &&
-//         purchaseToCompare.color === purchase.color
-//       ) {
-//         // Adding quantity of this purchase to the original purchase
-//         purchase.quantity += purchaseToCompare.quantity;
-//         // Deleting this purchase
-//         purchases.splice(
-//           purchases.findIndex(function (element) {
-//             if (element === purchaseToCompare) return true;
-//           }),
-//           1
-//         );
-//         return true;
-//       }
-//     }
-//   }
-//   return false;
-// }
-
-// // Function that iterates checkAndMergeIdentical until it returns false
-// function completeCheckAndMergeIdentical(purchases) {
-//   while (checkAndMergeIdentical(purchases));
-//   return purchases;
-// }
-
-// // Function that saves an array on the localStorage given the array of objects
-// function save(array) {
-//   var i = 0;
-//   array.forEach((element) => {
-//     localStorage.setItem(i, JSON.stringify(element));
-//     i++;
-//   });
-// }
-
-// // Function that sorts purchases array function of the id and color of products
-// function sortPurchases(purchases) {
-//   purchases.sort((a, b) => {
-//     var comparison = a.id.localeCompare(b.id);
-//     if (comparison === 0) {
-//       comparison = a.color.localeCompare(b.color);
-//     }
-//     return comparison;
-//   });
-// }
-
-// // Function that calls completeCheckAndMergeIdentical on localStorage content, sort and updates localStorage content
-// function updateLocalStorage() {
-//   var purchases = completeCheckAndMergeIdentical(getAllPurchases());
-//   sortPurchases(purchases);
-//   localStorage.clear();
-//   save(purchases);
-// }
 
 // Function that deletes purchase from localStorage given the id and color of the purchase
 function deletePurchase(id, color) {
@@ -211,16 +117,6 @@ function deletePurchase(id, color) {
   localStorage.clear();
   window.localStorage.setItem("cart", JSON.stringify(cart));
 }
-
-// // Function that deletes purchase from localStorage given the id and color of the purchase
-// function deletePurchase(id, color) {
-//     var purchases = getAllPurchases();
-//     purchases = purchases.filter((element) => {
-//       if (element.id !== id || element.color !== color) return true;
-//     });
-//     localStorage.clear();
-//     save(purchases);
-//   }
 
 // Function that sets deletePurchase function to all deleteItem buttons and remove corresponding element from the DOM
 function setDeleteOnClick(products) {
@@ -248,15 +144,6 @@ function calcQuantity() {
   });
   return quantity;
 }
-// // Function that calculates the total quantity of products
-// function calcQuantity() {
-//   const purchases = getAllPurchases();
-//   var quantity = 0;
-//   purchases.forEach((element) => {
-//     quantity += element.quantity;
-//   });
-//   return quantity;
-// }
 
 // Function that calculates the total price
 function calcPrice(products) {
@@ -268,16 +155,6 @@ function calcPrice(products) {
   });
   return price;
 }
-// // Function that calculates the total price
-// function calcPrice(products) {
-//   const purchases = getAllPurchases();
-//   var price = 0;
-//   purchases.forEach((purchase) => {
-//     const product = findProduct(purchase, products);
-//     price += purchase.quantity * product.price;
-//   });
-//   return price;
-// }
 
 // Function that sets total quantity and total price on DOM
 function setTotal(products) {
@@ -288,13 +165,6 @@ function setTotal(products) {
   totalQuantity.innerHTML = quantity;
   totalPrice.innerHTML = price;
 }
-
-// Function that finds specific purchase given the id and color of the product
-// function findPurchase(id,color,purchases) {
-//     return purchases.filter(element => {
-//         if (element.id === id && element.color === color) return true
-//     })[0];
-// }
 
 // Function that updates quantity of purchase on localStorage and updates DOM
 function updateQuantity(element, products) {
@@ -311,21 +181,6 @@ function updateQuantity(element, products) {
   window.localStorage.setItem("cart", JSON.stringify(cartUpdated));
   setTotal(products);
 }
-// // Function that updates quantity of purchase on localStorage and updates DOM
-// function updateQuantity(element, products) {
-//   const id = element.closest(".cart__item").dataset.id;
-//   const color = element.closest(".cart__item").dataset.color;
-//   var purchases = getAllPurchases();
-//   var purchasesUpdated = purchases.map((purchase) => {
-//     if (purchase.id === id && purchase.color === color) {
-//       purchase.quantity = parseInt(element.value);
-//     }
-//     return purchase;
-//   });
-//   localStorage.clear();
-//   save(purchasesUpdated);
-//   setTotal(products);
-// }
 
 //function that sets updateQuantity as onchange function of itemQuantity elements
 function setUpdateQuantityOnChange(products) {
@@ -390,11 +245,11 @@ function checkAddressInput() {
 function checkCityInput() {
   const city = document.getElementById("city").value;
   const cityErrorMsg = document.getElementById("cityErrorMsg");
-  const regex = /[^A-Za-zéèçàù -]/;
+  const regex = /[^A-Za-z0-9éèçàù -]/;
 
   if (city.search(regex) !== -1) {
     cityErrorMsg.innerHTML =
-      "Cela n'est pas valide, votre ville ne doit contenir ni chiffre ni caractère spécial autre que '-'";
+      "Cela n'est pas valide, votre ville ne doit pas contenir de caractère spécial autre que '-'";
     return false;
   } else {
     cityErrorMsg.innerHTML = "";
@@ -406,7 +261,6 @@ function checkCityInput() {
 function checkEmailInput() {
   const email = document.getElementById("email").value;
   const emailErrorMsg = document.getElementById("emailErrorMsg");
-  // const regex = /[@.]/;
 
   if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
     emailErrorMsg.innerHTML =
@@ -447,19 +301,19 @@ function createAPIObject() {
     checkCityInput() &&
     checkEmailInput()
   ) {
-    var contact = {
+    const contact = {
       firstName: firstName.value,
       lastName: lastName.value,
       address: address.value,
       city: city.value,
       email: email.value,
     };
-    const purchases = getAllPurchases();
-    var products = [];
-    purchases.forEach((purchase) => {
+    const cart = getCart();
+    let products = [];
+    cart.forEach((purchase) => {
       products.push(purchase.id);
     });
-    var response = {
+    const response = {
       contact: contact,
       products: products,
     };
@@ -484,7 +338,6 @@ function formOnSubmit() {
         }
       })
       .then(function (res) {
-        // localStorage.setItem("orderId",res.orderId);
         localStorage.clear();
         location.assign(`./confirmation.html?orderId=${res.orderId}`);
       })
@@ -509,10 +362,6 @@ fetch(apiUrl)
       return res.json();
     }
   })
-  //   .then(function (products) {
-  //     updateLocalStorage();
-  //     return products;
-  //   })
   .then((products) => {
     printPurchases(products);
     return products;
