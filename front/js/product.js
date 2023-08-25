@@ -66,7 +66,6 @@ function checkAndMergeIdentical(cart) {
           element.id === purchase.id && element.color === purchase.color
         );
       });
-      //   delete newCart[indexOfSamePurchase];
     }
     newCart.push(purchase);
     return newCart;
@@ -106,10 +105,6 @@ function savePurchase() {
     sortCart(cart);
 
     window.localStorage.setItem("cart", JSON.stringify(cart));
-    //   window.localStorage.setItem(
-    //     `purchase${window.localStorage.length}`,
-    //     JSON.stringify(purchase)
-    //   );
   }
 }
 
