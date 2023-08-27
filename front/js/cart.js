@@ -323,7 +323,7 @@ function createAPIObject() {
 
 // function that's going to be set to onsubmit form function
 function formOnSubmit() {
-  if (createAPIObject()) {
+  if (createAPIObject() && getCart().length > 0) {
     fetch(apiUrl + "/order", {
       method: "POST",
       headers: {

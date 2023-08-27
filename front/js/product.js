@@ -52,7 +52,7 @@ function addDom(product) {
   addColors(product);
 }
 
-// function that check end merge identical element (same id and same color) in the cart
+// function that checks and merges identical elements (same id and same color) in the cart
 function checkAndMergeIdentical(cart) {
   return cart.reduce((newCart, purchase) => {
     indexOfSamePurchase = newCart.findIndex(
